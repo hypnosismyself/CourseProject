@@ -42,6 +42,7 @@
             this.AdditionalColorButton = new System.Windows.Forms.Button();
             this.MainColorButton = new System.Windows.Forms.Button();
             this.ColorDialog = new System.Windows.Forms.ColorDialog();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.WidthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
             this.SuspendLayout();
@@ -49,7 +50,7 @@
             // WidthTrackBar
             // 
             this.WidthTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.WidthTrackBar.Location = new System.Drawing.Point(628, 529);
+            this.WidthTrackBar.Location = new System.Drawing.Point(628, 431);
             this.WidthTrackBar.Maximum = 100;
             this.WidthTrackBar.Minimum = 1;
             this.WidthTrackBar.Name = "WidthTrackBar";
@@ -64,7 +65,7 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(628, 506);
+            this.label1.Location = new System.Drawing.Point(628, 408);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 20);
             this.label1.TabIndex = 2;
@@ -85,7 +86,6 @@
             this.LineRadioButton.Name = "LineRadioButton";
             this.LineRadioButton.Size = new System.Drawing.Size(68, 68);
             this.LineRadioButton.TabIndex = 10;
-            this.LineRadioButton.TabStop = true;
             this.LineRadioButton.Text = "Линия";
             this.LineRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.LineRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -106,7 +106,6 @@
             this.CircleRadioButton.Name = "CircleRadioButton";
             this.CircleRadioButton.Size = new System.Drawing.Size(68, 68);
             this.CircleRadioButton.TabIndex = 9;
-            this.CircleRadioButton.TabStop = true;
             this.CircleRadioButton.Text = "Эллипс";
             this.CircleRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.CircleRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -128,7 +127,6 @@
             this.SquareRadioButton.Name = "SquareRadioButton";
             this.SquareRadioButton.Size = new System.Drawing.Size(68, 68);
             this.SquareRadioButton.TabIndex = 8;
-            this.SquareRadioButton.TabStop = true;
             this.SquareRadioButton.Text = "Квадрат";
             this.SquareRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.SquareRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -150,7 +148,6 @@
             this.DropperRadioButton.Name = "DropperRadioButton";
             this.DropperRadioButton.Size = new System.Drawing.Size(68, 68);
             this.DropperRadioButton.TabIndex = 7;
-            this.DropperRadioButton.TabStop = true;
             this.DropperRadioButton.Text = "Пипетка";
             this.DropperRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.DropperRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -172,7 +169,6 @@
             this.EraserRadioButton.Name = "EraserRadioButton";
             this.EraserRadioButton.Size = new System.Drawing.Size(68, 68);
             this.EraserRadioButton.TabIndex = 6;
-            this.EraserRadioButton.TabStop = true;
             this.EraserRadioButton.Text = "Ластик";
             this.EraserRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.EraserRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -194,7 +190,6 @@
             this.BucketRadioButton.Name = "BucketRadioButton";
             this.BucketRadioButton.Size = new System.Drawing.Size(68, 68);
             this.BucketRadioButton.TabIndex = 5;
-            this.BucketRadioButton.TabStop = true;
             this.BucketRadioButton.Text = "Заливка";
             this.BucketRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.BucketRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -216,7 +211,6 @@
             this.BrushToolRadioButton.Name = "BrushToolRadioButton";
             this.BrushToolRadioButton.Size = new System.Drawing.Size(68, 68);
             this.BrushToolRadioButton.TabIndex = 4;
-            this.BrushToolRadioButton.TabStop = true;
             this.BrushToolRadioButton.Text = "Кисть";
             this.BrushToolRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.BrushToolRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -238,7 +232,6 @@
             this.PenToolRadioButton.Name = "PenToolRadioButton";
             this.PenToolRadioButton.Size = new System.Drawing.Size(68, 68);
             this.PenToolRadioButton.TabIndex = 3;
-            this.PenToolRadioButton.TabStop = true;
             this.PenToolRadioButton.Text = "Карандаш";
             this.PenToolRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.PenToolRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -254,10 +247,9 @@
             this.Canvas.Location = new System.Drawing.Point(0, 0);
             this.Canvas.Margin = new System.Windows.Forms.Padding(0);
             this.Canvas.Name = "Canvas";
-            this.Canvas.Size = new System.Drawing.Size(621, 574);
+            this.Canvas.Size = new System.Drawing.Size(621, 476);
             this.Canvas.TabIndex = 0;
             this.Canvas.TabStop = false;
-            this.Canvas.Click += new System.EventHandler(this.Canvas_Click);
             this.Canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseDown);
             this.Canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseMove);
             this.Canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseUp);
@@ -267,7 +259,7 @@
             this.AdditionalColorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AdditionalColorButton.BackColor = System.Drawing.Color.White;
             this.AdditionalColorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.AdditionalColorButton.Location = new System.Drawing.Point(699, 327);
+            this.AdditionalColorButton.Location = new System.Drawing.Point(700, 340);
             this.AdditionalColorButton.Name = "AdditionalColorButton";
             this.AdditionalColorButton.Size = new System.Drawing.Size(45, 45);
             this.AdditionalColorButton.TabIndex = 11;
@@ -279,18 +271,29 @@
             this.MainColorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MainColorButton.BackColor = System.Drawing.Color.Black;
             this.MainColorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.MainColorButton.Location = new System.Drawing.Point(678, 308);
+            this.MainColorButton.Location = new System.Drawing.Point(679, 321);
             this.MainColorButton.Name = "MainColorButton";
             this.MainColorButton.Size = new System.Drawing.Size(45, 45);
             this.MainColorButton.TabIndex = 12;
             this.MainColorButton.UseVisualStyleBackColor = false;
             this.MainColorButton.Click += new System.EventHandler(this.MainColorButton_Click);
             // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(689, 388);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(32, 13);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "Цвет";
+            // 
             // EditorView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 575);
+            this.ClientSize = new System.Drawing.Size(800, 477);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.MainColorButton);
             this.Controls.Add(this.AdditionalColorButton);
             this.Controls.Add(this.LineRadioButton);
@@ -329,6 +332,7 @@
         private System.Windows.Forms.Button AdditionalColorButton;
         private System.Windows.Forms.Button MainColorButton;
         private System.Windows.Forms.ColorDialog ColorDialog;
+        private System.Windows.Forms.Label label2;
     }
 }
 
