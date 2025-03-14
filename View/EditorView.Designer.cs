@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorView));
             this.WidthTrackBar = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.AdditionalColorButton = new System.Windows.Forms.Button();
@@ -117,7 +118,7 @@
             this.radioButton1.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.radioButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.radioButton1.Image = global::CourseProject.Properties.Resources.square_selection;
-            this.radioButton1.Location = new System.Drawing.Point(885, 308);
+            this.radioButton1.Location = new System.Drawing.Point(886, 308);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(68, 68);
             this.radioButton1.TabIndex = 14;
@@ -332,8 +333,11 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.WidthTrackBar);
             this.Controls.Add(this.Canvas);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "EditorView";
-            this.Text = "Form1";
+            this.Text = "Редактор";
             ((System.ComponentModel.ISupportInitialize)(this.WidthTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).EndInit();
             this.ResumeLayout(false);

@@ -10,41 +10,108 @@ namespace CourseProject
 {
     public partial class EditorView : Form
     {
-        // поля конфига инструментов
+        // Настройки инструмента
         private string SelectedTool;
         private int ToolWidth = 1;
+
+        // Цветовая палитра
         public Color CanvasColor = Color.White;
         public Color MainColor = Color.Black;
         public Color AdditionalColor = Color.White;
-        public bool CtrlPressed;
 
-        // флаг возможности рисования
+        // Флаги для управления рисования
+        public bool CtrlPressed;
         private bool CanPaint;
 
-        // поля объекты для работы с графикой
-        private Bitmap CanvasBitmap;
-        private DraggedFragment draggedFragment;
-        private Bitmap TempBitmap; // Временное изображение для предпросмотра
-        private Point ToolStartPoint;
+        // Объекты для работы с изображением
+        private readonly Bitmap CanvasBitmap;
+        private Bitmap TempBitmap;
+        private DraggedFragment FragmentToDrag;
 
-        private Point mousePos2;
+        // Положение мыши
+        private Point ToolStartPoint;
+        private Point ToolFinishPoint;
+
+        private Dictionary<string, Action<Graphics, Pen, Point, Point>> toolActions;
 
         public EditorView()
         {
             InitializeComponent();
             DoubleBuffered = true;
-            // не можем рисовать
             CanPaint = false;
 
-            // создаем битмап и заполняем им холст
             CanvasBitmap = new Bitmap(Canvas.Width, Canvas.Height);
             using (Graphics g = Graphics.FromImage(CanvasBitmap))
             {
                 g.Clear(CanvasColor);
             }
             Canvas.Image = CanvasBitmap;
+
+            InitializeToolActions();
         }
 
+        // Инициализатор словаря сложных инструментов
+        private void InitializeToolActions()
+        {
+            toolActions = new Dictionary<string, Action<Graphics, Pen, Point, Point>>
+            {
+                { "Линия", (g, pen, start, end) => g.DrawLine(pen, start, end) },
+                { "Квадрат", DrawRectangle },
+                { "Эллипс", DrawEllipse }
+            };
+        }
+
+        // Нарисовать прямоугольник
+        private void DrawRectangle(Graphics g, Pen pen, Point start, Point end)
+        {
+            bool isCtrlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
+
+            // Вычисляем разницу по осям X и Y
+            int deltaX = end.X - start.X;
+            int deltaY = end.Y - start.Y;
+
+            // Если нажат Ctrl, рисуем квадрат (ширина и высота равны максимальному значению)
+            if (isCtrlPressed)
+            {
+                int size = Math.Max(Math.Abs(deltaX), Math.Abs(deltaY));
+                deltaX = Math.Sign(deltaX) * size; // Сохраняем направление
+                deltaY = Math.Sign(deltaY) * size; // Сохраняем направление
+            }
+
+            // Определяем начальные координаты для рисования
+            int x = deltaX < 0 ? start.X + deltaX : start.X;
+            int y = deltaY < 0 ? start.Y + deltaY : start.Y;
+
+            // Рисуем прямоугольник (или квадрат, если нажат Ctrl)
+            g.DrawRectangle(pen, x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+        }
+
+        // Нарисовать эллипс
+        private void DrawEllipse(Graphics g, Pen pen, Point start, Point end)
+        {
+            bool isCtrlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
+
+            // Вычисляем разницу по осям X и Y
+            int deltaX = end.X - start.X;
+            int deltaY = end.Y - start.Y;
+
+            // Если нажат Ctrl, рисуем круг (ширина и высота равны максимальному значению)
+            if (isCtrlPressed)
+            {
+                int size = Math.Max(Math.Abs(deltaX), Math.Abs(deltaY));
+                deltaX = Math.Sign(deltaX) * size; // Сохраняем направление
+                deltaY = Math.Sign(deltaY) * size; // Сохраняем направление
+            }
+
+            // Определяем начальные координаты для рисования
+            int x = deltaX < 0 ? start.X + deltaX : start.X;
+            int y = deltaY < 0 ? start.Y + deltaY : start.Y;
+
+            // Рисуем эллипс (или круг, если нажат Ctrl)
+            g.DrawEllipse(pen, x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+        }
+
+        // При нажатии кнопки мыши на холсте
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
         {
             if (SelectedTool != null)
@@ -53,10 +120,9 @@ namespace CourseProject
                 ToolStartPoint = e.Location;
                 Cursor.Current = Cursors.Cross;
 
-                if (draggedFragment != null && !draggedFragment.Rect.Contains(e.Location))
+                if (FragmentToDrag != null && !FragmentToDrag.Rect.Contains(e.Location))
                 {
-                    //уничтожаем фрагмент
-                    draggedFragment = null;
+                    FragmentToDrag = null;
                     Canvas.Invalidate();
                 }
 
@@ -69,123 +135,29 @@ namespace CourseProject
             if (!CanPaint || SelectedTool == "Пипетка" || SelectedTool == "Заливка")
                 return;
 
-            // Определяем цвет в зависимости от кнопки мыши
             Color color = e.Button == MouseButtons.Left ? MainColor : AdditionalColor;
-
-            // Создаем Pen в зависимости от выбранного инструмента
-            Pen Pen = CreatePenForTool(SelectedTool, color);
+            Pen pen = CreatePenForTool(SelectedTool, color);
 
             if (SelectedTool == "Выделить")
             {
-                if (e.Button == MouseButtons.Left)
-                {
-                    //юзер тянет фрагмент?
-                    if (draggedFragment != null)
-                    {
-                        //сдвигаем фрагмент
-                        draggedFragment.Location.Offset(e.Location.X - mousePos2.X, e.Location.Y - mousePos2.Y);
-                        ToolStartPoint = e.Location;
-                    }
-                    //сдвигаем выделенную область
-                    mousePos2 = e.Location;
-                    Canvas.Invalidate();
-                }
-                else
-                {
-                    ToolStartPoint = mousePos2 = e.Location;
-                }
+                HandleSelectionTool(e);
             }
-            else if (SelectedTool == "Квадрат" || SelectedTool == "Линия" || SelectedTool == "Эллипс")
+            else if (toolActions.ContainsKey(SelectedTool))
             {
-                // Рисуем на временном изображении
                 using (Graphics g = Graphics.FromImage(TempBitmap))
                 {
-                    // Восстанавливаем оригинальное изображение
                     g.DrawImage(CanvasBitmap, 0, 0);
-
-                    // Проверяем, нажата ли клавиша Ctrl
-                    bool isCtrlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
-
-                    // Рисуем в зависимости от выбранного инструмента
-                    switch (SelectedTool)
-                    {
-                        case "Линия":
-                            g.DrawLine(Pen, ToolStartPoint, e.Location);
-                            break;
-
-                        case "Квадрат":
-                            if (isCtrlPressed)
-                            {
-                                // Рисуем квадрат, если нажат Ctrl
-                                int size = Math.Max(Math.Abs(e.X - ToolStartPoint.X), Math.Abs(e.Y - ToolStartPoint.Y));
-                                int xx = ToolStartPoint.X;
-                                int yy = ToolStartPoint.Y;
-                                if (e.X < ToolStartPoint.X) xx = ToolStartPoint.X - size;
-                                if (e.Y < ToolStartPoint.Y) yy = ToolStartPoint.Y - size;
-                                g.DrawRectangle(Pen, xx, yy, size, size);
-                            }
-                            else
-                            {
-                                // Рисуем прямоугольник
-                                int width = e.X - ToolStartPoint.X;
-                                int height = e.Y - ToolStartPoint.Y;
-                                g.DrawRectangle(Pen, ToolStartPoint.X, ToolStartPoint.Y, width, height);
-                            }
-                            break;
-
-                        case "Эллипс":
-                            int diameterX = e.X - ToolStartPoint.X;
-                            int diameterY = e.Y - ToolStartPoint.Y;
-
-                            // Если нажат Ctrl, рисуем круг (ширина и высота одинаковы)
-                            if (isCtrlPressed)
-                            {
-                                int size = Math.Max(Math.Abs(diameterX), Math.Abs(diameterY));
-                                diameterX = size;
-                                diameterY = size;
-                            }
-
-                            // Корректируем координаты и размеры, если пользователь рисует справа налево или снизу вверх
-                            int x = ToolStartPoint.X;
-                            int y = ToolStartPoint.Y;
-                            if (diameterX < 0)
-                            {
-                                x = e.X;
-                                diameterX = -diameterX;
-                            }
-                            if (diameterY < 0)
-                            {
-                                y = e.Y;
-                                diameterY = -diameterY;
-                            }
-
-                            // Если нажат Ctrl, корректируем координаты для круга
-                            if (isCtrlPressed)
-                            {
-                                if (e.X < ToolStartPoint.X) x = ToolStartPoint.X - diameterX;
-                                if (e.Y < ToolStartPoint.Y) y = ToolStartPoint.Y - diameterY;
-                            }
-
-                            // Рисуем эллипс (или круг, если нажат Ctrl)
-                            g.DrawEllipse(Pen, x, y, diameterX, diameterY);
-                            break;
-                    }
+                    toolActions[SelectedTool](g, pen, ToolStartPoint, e.Location);
                 }
-                // Отображаем временное изображение
                 Canvas.Image = TempBitmap;
             }
             else
             {
-                // Рисуем линию
                 using (Graphics g = Graphics.FromImage(Canvas.Image))
                 {
-                    g.DrawLine(Pen, ToolStartPoint, e.Location);
+                    g.DrawLine(pen, ToolStartPoint, e.Location);
                 }
-
-                // Обновляем начальную точку для следующего отрезка
                 ToolStartPoint = e.Location;
-
-                // Обновляем Canvas
                 Canvas.Refresh();
             }
         }
@@ -194,58 +166,30 @@ namespace CourseProject
         {
             if (SelectedTool == "Выделить")
             {
-                //если есть сдвигаемый фрагмент
-                if (draggedFragment != null)
+                if (FragmentToDrag != null)
                 {
-                    //рисуем вырезанное белое место
-                    e.Graphics.SetClip(draggedFragment.SourceRect);
+                    e.Graphics.SetClip(FragmentToDrag.SourceRect);
                     e.Graphics.Clear(Color.White);
 
-                    //рисуем сдвинутый фрагмент
-                    e.Graphics.SetClip(draggedFragment.Rect);
-                    e.Graphics.DrawImage(Canvas.Image, draggedFragment.Location.X - draggedFragment.SourceRect.X, draggedFragment.Location.Y - draggedFragment.SourceRect.Y);
+                    e.Graphics.SetClip(FragmentToDrag.Rect);
+                    e.Graphics.DrawImage(Canvas.Image, FragmentToDrag.Location.X - FragmentToDrag.SourceRect.X, FragmentToDrag.Location.Y - FragmentToDrag.SourceRect.Y);
 
-                    //рисуем рамку
                     e.Graphics.ResetClip();
-                    ControlPaint.DrawFocusRectangle(e.Graphics, draggedFragment.Rect);
+                    ControlPaint.DrawFocusRectangle(e.Graphics, FragmentToDrag.Rect);
                 }
-                else
+                else if (ToolStartPoint != ToolFinishPoint)
                 {
-                    //если выделена область
-                    if (ToolStartPoint != mousePos2)
-                        ControlPaint.DrawFocusRectangle(e.Graphics, GetRect(ToolStartPoint, mousePos2));//рисуем рамку
+                    ControlPaint.DrawFocusRectangle(e.Graphics, GetRect(ToolStartPoint, ToolFinishPoint));
                 }
             }
         }
 
+        // При отпускании клавиши мыши на холсте
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
             CanPaint = false;
 
-            if (SelectedTool == "Выделить")
-            {
-                //пользователь выделил фрагмент и отпустил мышь?
-                if (ToolStartPoint != mousePos2)
-                {
-                    //создаем DraggedFragment
-                    var rect = GetRect(ToolStartPoint, mousePos2);
-                    draggedFragment = new DraggedFragment(rect, rect.Location, CanvasColor);
-                }
-                else
-                {
-                    //пользователь сдвинул фрагмент и отпутил мышь?
-                    if (draggedFragment != null)
-                    {
-                        //фиксируем изменения в исходном изображении
-                        draggedFragment.Fix(Canvas.Image);
-                        //уничтожаем фрагмент
-                        draggedFragment = null;
-                        ToolStartPoint = mousePos2 = e.Location;
-                    }
-                }
-                Canvas.Invalidate();
-            }
-            else if (SelectedTool == "Пипетка")
+            if (SelectedTool == "Пипетка")
             {
                 HandleColorPicker(e);
             }
@@ -253,19 +197,31 @@ namespace CourseProject
             {
                 HandleFillTool(e);
             }
-            else if (SelectedTool == "Квадрат" || SelectedTool == "Линия" || SelectedTool == "Эллипс")
+            else if (SelectedTool == "Выделить")
             {
-                // Копируем временное изображение на основной холст
+                if (ToolStartPoint != ToolFinishPoint)
+                {
+                    var rect = GetRect(ToolStartPoint, ToolFinishPoint);
+                    FragmentToDrag = new DraggedFragment(rect, rect.Location, CanvasColor);
+                }
+                else if (FragmentToDrag != null)
+                {
+                    FragmentToDrag.Fix(Canvas.Image);
+                    FragmentToDrag = null;
+                    ToolStartPoint = ToolFinishPoint = e.Location;
+                }
+                Canvas.Invalidate();
+            }
+            else if (toolActions.ContainsKey(SelectedTool))
+            {
                 using (Graphics g = Graphics.FromImage(CanvasBitmap))
                 {
                     g.DrawImage(TempBitmap, 0, 0);
                 }
 
-                // Обновляем изображение в PictureBox
                 Canvas.Image = CanvasBitmap;
 
-                // Освобождаем временное изображение
-                if (CanvasBitmap != null)
+                if (TempBitmap != null)
                 {
                     TempBitmap.Dispose();
                     TempBitmap = null;
@@ -273,6 +229,7 @@ namespace CourseProject
             }
         }
 
+        // Создание Pen для инструмента
         private Pen CreatePenForTool(string tool, Color color)
         {
             Pen pen;
@@ -308,6 +265,26 @@ namespace CourseProject
             return pen;
         }
 
+        // Обработчик выделения
+        private void HandleSelectionTool(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (FragmentToDrag != null)
+                {
+                    FragmentToDrag.Location.Offset(e.Location.X - ToolFinishPoint.X, e.Location.Y - ToolFinishPoint.Y);
+                    ToolStartPoint = e.Location;
+                }
+                ToolFinishPoint = e.Location;
+                Canvas.Invalidate();
+            }
+            else
+            {
+                ToolStartPoint = ToolFinishPoint = e.Location;
+            }
+        }
+
+        // Обработчик пипетки
         private void HandleColorPicker(MouseEventArgs e)
         {
             using (Bitmap image = new Bitmap(Canvas.Image))
@@ -327,49 +304,39 @@ namespace CourseProject
             }
         }
 
+        // Обработчик заливки
         private void HandleFillTool(MouseEventArgs e)
         {
-            // Создаем копию изображения для работы
             Bitmap image = new Bitmap(Canvas.Image);
 
-            // Получаем цвет пикселя, на который кликнули
             Color oldColor = image.GetPixel(e.X, e.Y);
             Color newColor = e.Button == MouseButtons.Left ? MainColor : AdditionalColor;
 
-            // Если старый и новый цвета совпадают, заливка не требуется
             if (oldColor.ToArgb() == newColor.ToArgb()) return;
 
-            // Выполняем заливку
             FloodFill(image, e.X, e.Y, oldColor, newColor);
 
-            // Обновляем изображение в PictureBox
             Canvas.Image = image;
         }
 
+        // Обработчик заливки
         private void FloodFill(Bitmap image, int x, int y, Color oldColor, Color newColor)
         {
-            // Проверяем, что начальные координаты находятся в пределах изображения
             if (x < 0 || x >= image.Width || y < 0 || y >= image.Height)
                 return;
 
-            // Блокируем биты изображения для прямого доступа
             BitmapData data = image.LockBits(
                 new Rectangle(0, 0, image.Width, image.Height),
                 ImageLockMode.ReadWrite,
                 PixelFormat.Format32bppArgb
             );
 
-            // Создаем массив для хранения данных изображения
             int[] pixels = new int[image.Width * image.Height];
-
-            // Копируем данные изображения в массив
             Marshal.Copy(data.Scan0, pixels, 0, pixels.Length);
 
-            // Получаем ARGB-значение старого и нового цветов
             int oldArgb = oldColor.ToArgb();
             int newArgb = newColor.ToArgb();
 
-            // Используем стек для хранения точек, которые нужно обработать
             Stack<Point> points = new Stack<Point>();
             points.Push(new Point(x, y));
 
@@ -377,43 +344,36 @@ namespace CourseProject
             {
                 Point pt = points.Pop();
 
-                // Проверяем, что точка находится в пределах изображения
                 if (pt.X < 0 || pt.X >= image.Width || pt.Y < 0 || pt.Y >= image.Height)
                     continue;
 
-                // Вычисляем индекс пикселя в массиве
                 int index = pt.Y * image.Width + pt.X;
 
-                // Проверяем, что цвет текущего пикселя совпадает с oldColor
                 if (pixels[index] == oldArgb)
                 {
-                    // Устанавливаем новый цвет
                     pixels[index] = newArgb;
 
-                    // Добавляем соседние пиксели в стек
-                    points.Push(new Point(pt.X - 1, pt.Y)); // Слева
-                    points.Push(new Point(pt.X + 1, pt.Y)); // Справа
-                    points.Push(new Point(pt.X, pt.Y - 1)); // Сверху
-                    points.Push(new Point(pt.X, pt.Y + 1)); // Снизу
+                    points.Push(new Point(pt.X - 1, pt.Y));
+                    points.Push(new Point(pt.X + 1, pt.Y));
+                    points.Push(new Point(pt.X, pt.Y - 1));
+                    points.Push(new Point(pt.X, pt.Y + 1));
                 }
             }
 
-            // Копируем измененные данные обратно в изображение
             Marshal.Copy(pixels, 0, data.Scan0, pixels.Length);
-
-            // Разблокируем биты изображения
             image.UnlockBits(data);
         }
 
+        // Изменение толщины
         private void WidthTrackBar_ValueChanged(object sender, System.EventArgs e)
         {
             ToolWidth = WidthTrackBar.Value;
         }
 
+        // Выбор инструмента
         private void ToolMenu_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton s = (RadioButton)sender;
-
             SelectedTool = s.Text;
         }
 
@@ -443,8 +403,8 @@ namespace CourseProject
 
         class DraggedFragment
         {
-            public Rectangle SourceRect;//прямоугольник фрагмента в исходном изображении
-            public Point Location;//положение сдвинутого фрагмента
+            public Rectangle SourceRect;
+            public Point Location;
             public Color CanvasColor;
 
             public DraggedFragment(Rectangle rectangle, Point location, Color color)
@@ -454,31 +414,27 @@ namespace CourseProject
                 CanvasColor = color;
             }
 
-            //прямоугольник сдвинутого фрагмента
             public Rectangle Rect
             {
                 get { return new Rectangle(Location, SourceRect.Size); }
             }
 
-            //фиксация изменений в исх изображении
-            public void Fix(System.Drawing.Image image)
+            // Фиксация изменения выделения
+            public void Fix(Image image)
             {
-                using (var clone = (System.Drawing.Image)image.Clone())
+                using (var clone = (Image)image.Clone())
                 using (var gr = Graphics.FromImage(image))
                 {
-                    //рисуем вырезанное белое место
                     gr.SetClip(SourceRect);
                     gr.Clear(CanvasColor);
 
-                    //рисуем сдвинутый фрагмент
                     gr.SetClip(Rect);
                     gr.DrawImage(clone, Location.X - SourceRect.X, Location.Y - SourceRect.Y);
                 }
             }
         }
 
-        //получение Rectangle из двух точек
-        Rectangle GetRect(Point p1, Point p2)
+        private Rectangle GetRect(Point p1, Point p2)
         {
             var x1 = Math.Min(p1.X, p2.X);
             var x2 = Math.Max(p1.X, p2.X);
