@@ -35,7 +35,17 @@
             this.MainColorButton = new System.Windows.Forms.Button();
             this.ColorDialog = new System.Windows.Forms.ColorDialog();
             this.label2 = new System.Windows.Forms.Label();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.MenuStrip = new System.Windows.Forms.MenuStrip();
+            this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.открытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.сохранитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.редактироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.яркостьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.контрастToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SizeLabel = new System.Windows.Forms.Label();
+            this.ResizeRadioButton = new System.Windows.Forms.RadioButton();
+            this.SelectRadioButton = new System.Windows.Forms.RadioButton();
             this.LineRadioButton = new System.Windows.Forms.RadioButton();
             this.CircleRadioButton = new System.Windows.Forms.RadioButton();
             this.SquareRadioButton = new System.Windows.Forms.RadioButton();
@@ -46,13 +56,14 @@
             this.PenToolRadioButton = new System.Windows.Forms.RadioButton();
             this.Canvas = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.WidthTrackBar)).BeginInit();
+            this.MenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
             this.SuspendLayout();
             // 
             // WidthTrackBar
             // 
             this.WidthTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.WidthTrackBar.Location = new System.Drawing.Point(811, 542);
+            this.WidthTrackBar.Location = new System.Drawing.Point(811, 574);
             this.WidthTrackBar.Maximum = 100;
             this.WidthTrackBar.Minimum = 1;
             this.WidthTrackBar.Name = "WidthTrackBar";
@@ -67,7 +78,7 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(813, 519);
+            this.label1.Location = new System.Drawing.Point(813, 551);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 20);
             this.label1.TabIndex = 2;
@@ -77,8 +88,9 @@
             // 
             this.AdditionalColorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AdditionalColorButton.BackColor = System.Drawing.Color.White;
+            this.AdditionalColorButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
             this.AdditionalColorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.AdditionalColorButton.Location = new System.Drawing.Point(866, 412);
+            this.AdditionalColorButton.Location = new System.Drawing.Point(866, 431);
             this.AdditionalColorButton.Name = "AdditionalColorButton";
             this.AdditionalColorButton.Size = new System.Drawing.Size(45, 45);
             this.AdditionalColorButton.TabIndex = 11;
@@ -89,8 +101,9 @@
             // 
             this.MainColorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MainColorButton.BackColor = System.Drawing.Color.Black;
+            this.MainColorButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
             this.MainColorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.MainColorButton.Location = new System.Drawing.Point(845, 393);
+            this.MainColorButton.Location = new System.Drawing.Point(845, 412);
             this.MainColorButton.Name = "MainColorButton";
             this.MainColorButton.Size = new System.Drawing.Size(45, 45);
             this.MainColorButton.TabIndex = 12;
@@ -101,32 +114,123 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(855, 460);
+            this.label2.Location = new System.Drawing.Point(855, 479);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(32, 13);
             this.label2.TabIndex = 13;
             this.label2.Text = "Цвет";
             // 
-            // radioButton1
+            // MenuStrip
             // 
-            this.radioButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioButton1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton1.BackColor = System.Drawing.Color.Transparent;
-            this.radioButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.radioButton1.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton1.FlatAppearance.BorderSize = 0;
-            this.radioButton1.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
-            this.radioButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.radioButton1.Image = global::CourseProject.Properties.Resources.square_selection;
-            this.radioButton1.Location = new System.Drawing.Point(886, 308);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(68, 68);
-            this.radioButton1.TabIndex = 14;
-            this.radioButton1.Text = "Выделить";
-            this.radioButton1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.radioButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.radioButton1.UseVisualStyleBackColor = false;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.ToolMenu_CheckedChanged);
+            this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.файлToolStripMenuItem,
+            this.редактироватьToolStripMenuItem});
+            this.MenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.MenuStrip.Name = "MenuStrip";
+            this.MenuStrip.Size = new System.Drawing.Size(965, 24);
+            this.MenuStrip.TabIndex = 15;
+            this.MenuStrip.Text = "menuStrip1";
+            // 
+            // файлToolStripMenuItem
+            // 
+            this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.открытьToolStripMenuItem,
+            this.сохранитьToolStripMenuItem,
+            this.выходToolStripMenuItem});
+            this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
+            this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.файлToolStripMenuItem.Text = "Файл";
+            // 
+            // открытьToolStripMenuItem
+            // 
+            this.открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
+            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.открытьToolStripMenuItem.Text = "Открыть";
+            // 
+            // сохранитьToolStripMenuItem
+            // 
+            this.сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
+            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.сохранитьToolStripMenuItem.Text = "Сохранить";
+            // 
+            // выходToolStripMenuItem
+            // 
+            this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
+            this.выходToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.выходToolStripMenuItem.Text = "Выход";
+            // 
+            // редактироватьToolStripMenuItem
+            // 
+            this.редактироватьToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.яркостьToolStripMenuItem,
+            this.контрастToolStripMenuItem});
+            this.редактироватьToolStripMenuItem.Name = "редактироватьToolStripMenuItem";
+            this.редактироватьToolStripMenuItem.Size = new System.Drawing.Size(99, 20);
+            this.редактироватьToolStripMenuItem.Text = "Редактировать";
+            // 
+            // яркостьToolStripMenuItem
+            // 
+            this.яркостьToolStripMenuItem.Name = "яркостьToolStripMenuItem";
+            this.яркостьToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.яркостьToolStripMenuItem.Text = "Яркость";
+            // 
+            // контрастToolStripMenuItem
+            // 
+            this.контрастToolStripMenuItem.Name = "контрастToolStripMenuItem";
+            this.контрастToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.контрастToolStripMenuItem.Text = "Контраст";
+            // 
+            // SizeLabel
+            // 
+            this.SizeLabel.AutoSize = true;
+            this.SizeLabel.Location = new System.Drawing.Point(918, 598);
+            this.SizeLabel.Name = "SizeLabel";
+            this.SizeLabel.Size = new System.Drawing.Size(35, 13);
+            this.SizeLabel.TabIndex = 16;
+            this.SizeLabel.Text = "label3";
+            this.SizeLabel.Visible = false;
+            // 
+            // ResizeRadioButton
+            // 
+            this.ResizeRadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ResizeRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
+            this.ResizeRadioButton.BackColor = System.Drawing.Color.Transparent;
+            this.ResizeRadioButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.ResizeRadioButton.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ResizeRadioButton.FlatAppearance.BorderSize = 0;
+            this.ResizeRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
+            this.ResizeRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ResizeRadioButton.Image = global::CourseProject.Properties.Resources.resize;
+            this.ResizeRadioButton.Location = new System.Drawing.Point(811, 327);
+            this.ResizeRadioButton.Name = "ResizeRadioButton";
+            this.ResizeRadioButton.Size = new System.Drawing.Size(68, 68);
+            this.ResizeRadioButton.TabIndex = 17;
+            this.ResizeRadioButton.Text = "Холст";
+            this.ResizeRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.ResizeRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.ResizeRadioButton.UseVisualStyleBackColor = false;
+            this.ResizeRadioButton.CheckedChanged += new System.EventHandler(this.ToolMenu_CheckedChanged);
+            // 
+            // SelectRadioButton
+            // 
+            this.SelectRadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SelectRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
+            this.SelectRadioButton.BackColor = System.Drawing.Color.Transparent;
+            this.SelectRadioButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.SelectRadioButton.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.SelectRadioButton.FlatAppearance.BorderSize = 0;
+            this.SelectRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
+            this.SelectRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SelectRadioButton.Image = global::CourseProject.Properties.Resources.square_selection;
+            this.SelectRadioButton.Location = new System.Drawing.Point(885, 327);
+            this.SelectRadioButton.Name = "SelectRadioButton";
+            this.SelectRadioButton.Size = new System.Drawing.Size(68, 68);
+            this.SelectRadioButton.TabIndex = 14;
+            this.SelectRadioButton.Text = "Выделить";
+            this.SelectRadioButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.SelectRadioButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.SelectRadioButton.UseVisualStyleBackColor = false;
+            this.SelectRadioButton.CheckedChanged += new System.EventHandler(this.ToolMenu_CheckedChanged);
             // 
             // LineRadioButton
             // 
@@ -139,7 +243,7 @@
             this.LineRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.LineRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.LineRadioButton.Image = global::CourseProject.Properties.Resources.line;
-            this.LineRadioButton.Location = new System.Drawing.Point(885, 160);
+            this.LineRadioButton.Location = new System.Drawing.Point(885, 179);
             this.LineRadioButton.Name = "LineRadioButton";
             this.LineRadioButton.Size = new System.Drawing.Size(68, 68);
             this.LineRadioButton.TabIndex = 10;
@@ -160,7 +264,7 @@
             this.CircleRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.CircleRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CircleRadioButton.Image = global::CourseProject.Properties.Resources.circle;
-            this.CircleRadioButton.Location = new System.Drawing.Point(811, 234);
+            this.CircleRadioButton.Location = new System.Drawing.Point(811, 253);
             this.CircleRadioButton.Name = "CircleRadioButton";
             this.CircleRadioButton.Size = new System.Drawing.Size(68, 68);
             this.CircleRadioButton.TabIndex = 9;
@@ -181,7 +285,7 @@
             this.SquareRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.SquareRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SquareRadioButton.Image = global::CourseProject.Properties.Resources.square;
-            this.SquareRadioButton.Location = new System.Drawing.Point(885, 234);
+            this.SquareRadioButton.Location = new System.Drawing.Point(885, 253);
             this.SquareRadioButton.Name = "SquareRadioButton";
             this.SquareRadioButton.Size = new System.Drawing.Size(68, 68);
             this.SquareRadioButton.TabIndex = 8;
@@ -202,7 +306,7 @@
             this.DropperRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.DropperRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.DropperRadioButton.Image = global::CourseProject.Properties.Resources.dropper;
-            this.DropperRadioButton.Location = new System.Drawing.Point(885, 86);
+            this.DropperRadioButton.Location = new System.Drawing.Point(885, 105);
             this.DropperRadioButton.Name = "DropperRadioButton";
             this.DropperRadioButton.Size = new System.Drawing.Size(68, 68);
             this.DropperRadioButton.TabIndex = 7;
@@ -223,7 +327,7 @@
             this.EraserRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.EraserRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.EraserRadioButton.Image = global::CourseProject.Properties.Resources.eraser;
-            this.EraserRadioButton.Location = new System.Drawing.Point(811, 86);
+            this.EraserRadioButton.Location = new System.Drawing.Point(811, 105);
             this.EraserRadioButton.Name = "EraserRadioButton";
             this.EraserRadioButton.Size = new System.Drawing.Size(68, 68);
             this.EraserRadioButton.TabIndex = 6;
@@ -244,7 +348,7 @@
             this.BucketRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.BucketRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BucketRadioButton.Image = global::CourseProject.Properties.Resources.bucket;
-            this.BucketRadioButton.Location = new System.Drawing.Point(811, 160);
+            this.BucketRadioButton.Location = new System.Drawing.Point(811, 179);
             this.BucketRadioButton.Name = "BucketRadioButton";
             this.BucketRadioButton.Size = new System.Drawing.Size(68, 68);
             this.BucketRadioButton.TabIndex = 5;
@@ -265,7 +369,7 @@
             this.BrushToolRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.BrushToolRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BrushToolRadioButton.Image = global::CourseProject.Properties.Resources.brush;
-            this.BrushToolRadioButton.Location = new System.Drawing.Point(885, 12);
+            this.BrushToolRadioButton.Location = new System.Drawing.Point(885, 31);
             this.BrushToolRadioButton.Name = "BrushToolRadioButton";
             this.BrushToolRadioButton.Size = new System.Drawing.Size(68, 68);
             this.BrushToolRadioButton.TabIndex = 4;
@@ -286,7 +390,7 @@
             this.PenToolRadioButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Silver;
             this.PenToolRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.PenToolRadioButton.Image = global::CourseProject.Properties.Resources.pencil;
-            this.PenToolRadioButton.Location = new System.Drawing.Point(811, 12);
+            this.PenToolRadioButton.Location = new System.Drawing.Point(811, 31);
             this.PenToolRadioButton.Name = "PenToolRadioButton";
             this.PenToolRadioButton.Size = new System.Drawing.Size(68, 68);
             this.PenToolRadioButton.TabIndex = 3;
@@ -298,16 +402,14 @@
             // 
             // Canvas
             // 
-            this.Canvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.Canvas.BackColor = System.Drawing.Color.White;
-            this.Canvas.Location = new System.Drawing.Point(0, 0);
+            this.Canvas.Location = new System.Drawing.Point(0, 24);
             this.Canvas.Margin = new System.Windows.Forms.Padding(0);
             this.Canvas.Name = "Canvas";
-            this.Canvas.Size = new System.Drawing.Size(794, 587);
+            this.Canvas.Size = new System.Drawing.Size(785, 565);
             this.Canvas.TabIndex = 0;
             this.Canvas.TabStop = false;
+            this.Canvas.SizeChanged += new System.EventHandler(this.Canvas_SizeChanged);
             this.Canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.Canvas_Paint);
             this.Canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseDown);
             this.Canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseMove);
@@ -317,8 +419,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(965, 588);
-            this.Controls.Add(this.radioButton1);
+            this.ClientSize = new System.Drawing.Size(965, 620);
+            this.Controls.Add(this.ResizeRadioButton);
+            this.Controls.Add(this.SizeLabel);
+            this.Controls.Add(this.SelectRadioButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.MainColorButton);
             this.Controls.Add(this.AdditionalColorButton);
@@ -333,12 +437,14 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.WidthTrackBar);
             this.Controls.Add(this.Canvas);
+            this.Controls.Add(this.MenuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
+            this.MainMenuStrip = this.MenuStrip;
             this.Name = "EditorView";
             this.Text = "Редактор";
             ((System.ComponentModel.ISupportInitialize)(this.WidthTrackBar)).EndInit();
+            this.MenuStrip.ResumeLayout(false);
+            this.MenuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -362,7 +468,17 @@
         private System.Windows.Forms.Button MainColorButton;
         private System.Windows.Forms.ColorDialog ColorDialog;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton SelectRadioButton;
+        private System.Windows.Forms.MenuStrip MenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem редактироватьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem сохранитьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem выходToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem яркостьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem контрастToolStripMenuItem;
+        private System.Windows.Forms.Label SizeLabel;
+        private System.Windows.Forms.RadioButton ResizeRadioButton;
     }
 }
 

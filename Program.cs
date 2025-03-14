@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CourseProject.View;
+using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace CourseProject
@@ -16,7 +15,8 @@ namespace CourseProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new EditorView());
+            //Application.Run(new SandBox());
+            Application.Run(new EditorView(Color.White));
         }
     }
 }

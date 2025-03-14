@@ -10,12 +10,16 @@ namespace CourseProject
 {
     public partial class EditorView : Form
     {
+        // Флаги для изменения размера холста
+        private bool IsResizing = false;
+        private Point LastPoint;
+
         // Настройки инструмента
         private string SelectedTool;
         private int ToolWidth = 1;
 
         // Цветовая палитра
-        public Color CanvasColor = Color.White;
+        public Color CanvasColor;
         public Color MainColor = Color.Black;
         public Color AdditionalColor = Color.White;
 
@@ -34,8 +38,9 @@ namespace CourseProject
 
         private Dictionary<string, Action<Graphics, Pen, Point, Point>> toolActions;
 
-        public EditorView()
+        public EditorView(Color color)
         {
+            CanvasColor = color;
             InitializeComponent();
             DoubleBuffered = true;
             CanPaint = false;
@@ -46,6 +51,9 @@ namespace CourseProject
                 g.Clear(CanvasColor);
             }
             Canvas.Image = CanvasBitmap;
+
+            MainColorButton.ForeColor = MainColor;
+            AdditionalColorButton.ForeColor = AdditionalColor;
 
             InitializeToolActions();
         }
@@ -83,7 +91,12 @@ namespace CourseProject
             int y = deltaY < 0 ? start.Y + deltaY : start.Y;
 
             // Рисуем прямоугольник (или квадрат, если нажат Ctrl)
-            g.DrawRectangle(pen, x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+            if (AdditionalColor == CanvasColor)
+                g.DrawRectangle(pen, x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+            else
+            {
+                g.FillRectangle(new SolidBrush(AdditionalColor), x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+            }
         }
 
         // Нарисовать эллипс
@@ -108,7 +121,12 @@ namespace CourseProject
             int y = deltaY < 0 ? start.Y + deltaY : start.Y;
 
             // Рисуем эллипс (или круг, если нажат Ctrl)
-            g.DrawEllipse(pen, x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+            if (AdditionalColor == CanvasColor)
+                g.DrawEllipse(pen, x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+            else
+            {
+                g.FillEllipse(new SolidBrush(AdditionalColor), x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+            }
         }
 
         // При нажатии кнопки мыши на холсте
@@ -116,7 +134,21 @@ namespace CourseProject
         {
             if (SelectedTool != null)
             {
-                CanPaint = true;
+                // Проверяем, находится ли курсор в правом нижнем углу PictureBox
+                if (SelectedTool == "Холст")
+                {
+                    if (e.Location.X >= Canvas.Width - 10 && e.Location.Y >= Canvas.Height - 10)
+                    {
+                        IsResizing = true;
+                        Cursor.Current = Cursors.SizeNWSE;
+                        SizeLabel.Location = new Point(Canvas.Right, Canvas.Bottom);
+                        SizeLabel.Visible = true;
+                        LastPoint = e.Location;
+                    }
+                    return;
+                }
+
+                CanPaint = SelectedTool != null;
                 ToolStartPoint = e.Location;
                 Cursor.Current = Cursors.Cross;
 
@@ -132,6 +164,23 @@ namespace CourseProject
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
+            if (IsResizing)
+            {
+                // Вычисляем новую ширину и высоту PictureBox
+                int newWidth = Canvas.Width + (e.X - LastPoint.X);
+                int newHeight = Canvas.Height + (e.Y - LastPoint.Y);
+
+                // Устанавливаем новые размеры PictureBox
+                Canvas.Size = new Size(newWidth, newHeight);
+
+                // Обновляем положение Label
+                SizeLabel.Location = new Point(Canvas.Right, Canvas.Bottom);
+                SizeLabel.Text = $"Ширина: {Canvas.Right}\nВысота: {Canvas.Bottom}";
+
+                LastPoint = e.Location;
+                return;
+            }
+
             if (!CanPaint || SelectedTool == "Пипетка" || SelectedTool == "Заливка")
                 return;
 
@@ -187,6 +236,11 @@ namespace CourseProject
         // При отпускании клавиши мыши на холсте
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
+            IsResizing = false;
+            SizeLabel.Visible = false;
+
+            if (SelectedTool == null) return;
+
             CanPaint = false;
 
             if (SelectedTool == "Пипетка")
@@ -315,8 +369,6 @@ namespace CourseProject
             if (oldColor.ToArgb() == newColor.ToArgb()) return;
 
             FloodFill(image, e.X, e.Y, oldColor, newColor);
-
-            Canvas.Image = image;
         }
 
         // Обработчик заливки
@@ -362,6 +414,8 @@ namespace CourseProject
 
             Marshal.Copy(pixels, 0, data.Scan0, pixels.Length);
             image.UnlockBits(data);
+
+            Canvas.Image = image;
         }
 
         // Изменение толщины
@@ -379,6 +433,8 @@ namespace CourseProject
 
         private void MainColorButton_Click(object sender, EventArgs e)
         {
+            ColorDialog.Color = MainColor;
+
             using (ColorDialog)
             {
                 if (ColorDialog.ShowDialog() == DialogResult.OK)
@@ -391,6 +447,8 @@ namespace CourseProject
 
         private void AdditionalColorButton_Click(object sender, EventArgs e)
         {
+            ColorDialog.Color = AdditionalColor;
+
             using (ColorDialog)
             {
                 if (ColorDialog.ShowDialog() == DialogResult.OK)
@@ -441,6 +499,11 @@ namespace CourseProject
             var y1 = Math.Min(p1.Y, p2.Y);
             var y2 = Math.Max(p1.Y, p2.Y);
             return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+        }
+
+        private void Canvas_SizeChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
