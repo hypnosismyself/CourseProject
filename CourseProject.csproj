@@ -54,6 +54,18 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View\MDIParentView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\MDIParentView.Designer.cs">
+      <DependentUpon>MDIParentView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\SandBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\SandBox.Designer.cs">
+      <DependentUpon>SandBox.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="View\EditorView.resx">
       <DependentUpon>EditorView.cs</DependentUpon>
     </EmbeddedResource>
@@ -67,6 +79,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="View\MDIParentView.resx">
+      <DependentUpon>MDIParentView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\SandBox.resx">
+      <DependentUpon>SandBox.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -110,6 +128,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\square_selection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\resize.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
