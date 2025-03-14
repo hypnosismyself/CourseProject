@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace CourseProject
 {
-    public partial class EditorView: Form
+    public partial class EditorView : Form
     {
         // поля конфига инструментов
         private string SelectedTool;
@@ -23,8 +23,11 @@ namespace CourseProject
 
         // поля объекты для работы с графикой
         private Bitmap CanvasBitmap;
+        private DraggedFragment draggedFragment;
         private Bitmap TempBitmap; // Временное изображение для предпросмотра
         private Point ToolStartPoint;
+
+        private Point mousePos2;
 
         public EditorView()
         {
@@ -50,6 +53,13 @@ namespace CourseProject
                 ToolStartPoint = e.Location;
                 Cursor.Current = Cursors.Cross;
 
+                if (draggedFragment != null && !draggedFragment.Rect.Contains(e.Location))
+                {
+                    //уничтожаем фрагмент
+                    draggedFragment = null;
+                    Canvas.Invalidate();
+                }
+
                 TempBitmap = (Bitmap)CanvasBitmap.Clone();
             }
         }
@@ -65,7 +75,27 @@ namespace CourseProject
             // Создаем Pen в зависимости от выбранного инструмента
             Pen Pen = CreatePenForTool(SelectedTool, color);
 
-            if (SelectedTool == "Квадрат" || SelectedTool == "Линия" || SelectedTool == "Эллипс")
+            if (SelectedTool == "Выделить")
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    //юзер тянет фрагмент?
+                    if (draggedFragment != null)
+                    {
+                        //сдвигаем фрагмент
+                        draggedFragment.Location.Offset(e.Location.X - mousePos2.X, e.Location.Y - mousePos2.Y);
+                        ToolStartPoint = e.Location;
+                    }
+                    //сдвигаем выделенную область
+                    mousePos2 = e.Location;
+                    Canvas.Invalidate();
+                }
+                else
+                {
+                    ToolStartPoint = mousePos2 = e.Location;
+                }
+            }
+            else if (SelectedTool == "Квадрат" || SelectedTool == "Линия" || SelectedTool == "Эллипс")
             {
                 // Рисуем на временном изображении
                 using (Graphics g = Graphics.FromImage(TempBitmap))
@@ -160,11 +190,62 @@ namespace CourseProject
             }
         }
 
+        private void Canvas_Paint(object sender, PaintEventArgs e)
+        {
+            if (SelectedTool == "Выделить")
+            {
+                //если есть сдвигаемый фрагмент
+                if (draggedFragment != null)
+                {
+                    //рисуем вырезанное белое место
+                    e.Graphics.SetClip(draggedFragment.SourceRect);
+                    e.Graphics.Clear(Color.White);
+
+                    //рисуем сдвинутый фрагмент
+                    e.Graphics.SetClip(draggedFragment.Rect);
+                    e.Graphics.DrawImage(Canvas.Image, draggedFragment.Location.X - draggedFragment.SourceRect.X, draggedFragment.Location.Y - draggedFragment.SourceRect.Y);
+
+                    //рисуем рамку
+                    e.Graphics.ResetClip();
+                    ControlPaint.DrawFocusRectangle(e.Graphics, draggedFragment.Rect);
+                }
+                else
+                {
+                    //если выделена область
+                    if (ToolStartPoint != mousePos2)
+                        ControlPaint.DrawFocusRectangle(e.Graphics, GetRect(ToolStartPoint, mousePos2));//рисуем рамку
+                }
+            }
+        }
+
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
             CanPaint = false;
 
-            if (SelectedTool == "Пипетка")
+            if (SelectedTool == "Выделить")
+            {
+                //пользователь выделил фрагмент и отпустил мышь?
+                if (ToolStartPoint != mousePos2)
+                {
+                    //создаем DraggedFragment
+                    var rect = GetRect(ToolStartPoint, mousePos2);
+                    draggedFragment = new DraggedFragment(rect, rect.Location, CanvasColor);
+                }
+                else
+                {
+                    //пользователь сдвинул фрагмент и отпутил мышь?
+                    if (draggedFragment != null)
+                    {
+                        //фиксируем изменения в исходном изображении
+                        draggedFragment.Fix(Canvas.Image);
+                        //уничтожаем фрагмент
+                        draggedFragment = null;
+                        ToolStartPoint = mousePos2 = e.Location;
+                    }
+                }
+                Canvas.Invalidate();
+            }
+            else if (SelectedTool == "Пипетка")
             {
                 HandleColorPicker(e);
             }
@@ -358,6 +439,52 @@ namespace CourseProject
                     AdditionalColorButton.BackColor = ColorDialog.Color;
                 }
             }
+        }
+
+        class DraggedFragment
+        {
+            public Rectangle SourceRect;//прямоугольник фрагмента в исходном изображении
+            public Point Location;//положение сдвинутого фрагмента
+            public Color CanvasColor;
+
+            public DraggedFragment(Rectangle rectangle, Point location, Color color)
+            {
+                SourceRect = rectangle;
+                Location = location;
+                CanvasColor = color;
+            }
+
+            //прямоугольник сдвинутого фрагмента
+            public Rectangle Rect
+            {
+                get { return new Rectangle(Location, SourceRect.Size); }
+            }
+
+            //фиксация изменений в исх изображении
+            public void Fix(System.Drawing.Image image)
+            {
+                using (var clone = (System.Drawing.Image)image.Clone())
+                using (var gr = Graphics.FromImage(image))
+                {
+                    //рисуем вырезанное белое место
+                    gr.SetClip(SourceRect);
+                    gr.Clear(CanvasColor);
+
+                    //рисуем сдвинутый фрагмент
+                    gr.SetClip(Rect);
+                    gr.DrawImage(clone, Location.X - SourceRect.X, Location.Y - SourceRect.Y);
+                }
+            }
+        }
+
+        //получение Rectangle из двух точек
+        Rectangle GetRect(Point p1, Point p2)
+        {
+            var x1 = Math.Min(p1.X, p2.X);
+            var x2 = Math.Max(p1.X, p2.X);
+            var y1 = Math.Min(p1.Y, p2.Y);
+            var y2 = Math.Max(p1.Y, p2.Y);
+            return new Rectangle(x1, y1, x2 - x1, y2 - y1);
         }
     }
 }
