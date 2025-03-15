@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="View\DraggedFragment.cs" />
     <Compile Include="View\EditorView.cs">
       <SubType>Form</SubType>
     </Compile>
