@@ -11,6 +11,8 @@ namespace CourseProject
 {
     public partial class EditorView : Form
     {
+        private const string _FILTER = "Изображения (*.bmp, *.png, *.jpg, *.jpeg)|*.bmp;*.png;*.jpg;*.jpeg;";
+
         // Флаги для изменения размера холста
         private bool IsResizing = false;
         private Point LastPoint;
@@ -46,7 +48,6 @@ namespace CourseProject
 
             CanvasColor = color;
 
-
             MainColorButton.ForeColor = MainColor;
             AdditionalColorButton.ForeColor = AdditionalColor;
 
@@ -75,32 +76,44 @@ namespace CourseProject
             };
         }
 
-        // Нарисовать прямоугольник
-        private void DrawRectangle(Graphics g, Pen pen, Point start, Point end)
+        // Общий метод для вычисления размеров и координат фигуры
+        private (int x, int y, int width, int height) CalculateShapeDimensions(Point start, Point end, bool isCtrlPressed)
         {
-            bool isCtrlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
-
             // Вычисляем разницу по осям X и Y
             int deltaX = end.X - start.X;
             int deltaY = end.Y - start.Y;
 
-            // Если нажат Ctrl, рисуем квадрат (ширина и высота равны максимальному значению)
+            // Если нажат Ctrl, делаем фигуру квадратной или круглой
             if (isCtrlPressed)
             {
                 int size = Math.Max(Math.Abs(deltaX), Math.Abs(deltaY));
-                deltaX = Math.Sign(deltaX) * size; // Сохраняем направление
-                deltaY = Math.Sign(deltaY) * size; // Сохраняем направление
+
+                // Сохраняем направление
+                deltaX = Math.Sign(deltaX) * size;
+                deltaY = Math.Sign(deltaY) * size;
             }
 
             // Определяем начальные координаты для рисования
             int x = deltaX < 0 ? start.X + deltaX : start.X;
             int y = deltaY < 0 ? start.Y + deltaY : start.Y;
 
+            // Возвращаем координаты и размеры
+            return (x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+        }
+
+        // Нарисовать прямоугольник
+        private void DrawRectangle(Graphics g, Pen pen, Point start, Point end)
+        {
+            bool isCtrlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
+
+            // Вычисляем размеры и координаты
+            var (x, y, width, height) = CalculateShapeDimensions(start, end, isCtrlPressed);
+
             // Рисуем прямоугольник (или квадрат, если нажат Ctrl)
             if (AdditionalColor == CanvasColor)
-                g.DrawRectangle(pen, x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+                g.DrawRectangle(pen, x, y, width, height);
             else
-                g.FillRectangle(new SolidBrush(AdditionalColor), x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+                g.FillRectangle(new SolidBrush(AdditionalColor), x, y, width, height);
         }
 
         // Нарисовать эллипс
@@ -108,27 +121,14 @@ namespace CourseProject
         {
             bool isCtrlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
 
-            // Вычисляем разницу по осям X и Y
-            int deltaX = end.X - start.X;
-            int deltaY = end.Y - start.Y;
-
-            // Если нажат Ctrl, рисуем круг (ширина и высота равны максимальному значению)
-            if (isCtrlPressed)
-            {
-                int size = Math.Max(Math.Abs(deltaX), Math.Abs(deltaY));
-                deltaX = Math.Sign(deltaX) * size; // Сохраняем направление
-                deltaY = Math.Sign(deltaY) * size; // Сохраняем направление
-            }
-
-            // Определяем начальные координаты для рисования
-            int x = deltaX < 0 ? start.X + deltaX : start.X;
-            int y = deltaY < 0 ? start.Y + deltaY : start.Y;
+            // Вычисляем размеры и координаты
+            var (x, y, width, height) = CalculateShapeDimensions(start, end, isCtrlPressed);
 
             // Рисуем эллипс (или круг, если нажат Ctrl)
             if (AdditionalColor == CanvasColor)
-                g.DrawEllipse(pen, x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+                g.DrawEllipse(pen, x, y, width, height);
             else
-                g.FillEllipse(new SolidBrush(AdditionalColor), x, y, Math.Abs(deltaX), Math.Abs(deltaY));
+                g.FillEllipse(new SolidBrush(AdditionalColor), x, y, width, height);
         }
 
         // При нажатии кнопки мыши на холсте
@@ -168,8 +168,7 @@ namespace CourseProject
         {
             if (IsResizing)
             {
-                CalculateResize(e);
-
+                CalculateCanvasResizing(e);
                 return;
             }
 
@@ -185,10 +184,17 @@ namespace CourseProject
             else if (toolActions.ContainsKey(SelectedTool))
             {
                 // Создаем временное изображение для предварительного просмотра
-                TempBitmap = (Bitmap)CanvasBitmap.Clone();
+                if (TempBitmap == null)
+                {
+                    TempBitmap = (Bitmap)CanvasBitmap.Clone();
+                }
 
                 using (Graphics g = Graphics.FromImage(TempBitmap))
                 {
+                    // Очищаем временное изображение, чтобы не накладывать фигуры
+                    g.DrawImage(CanvasBitmap, 0, 0);
+
+                    // Рисуем фигуру на временном изображении
                     toolActions[SelectedTool](g, pen, ToolStartPoint, e.Location);
                 }
 
@@ -197,12 +203,15 @@ namespace CourseProject
             }
             else
             {
-                using (Graphics g = Graphics.FromImage(Canvas.Image))
+                // Для простых инструментов (например, карандаш) рисуем напрямую на CanvasBitmap
+                using (Graphics g = Graphics.FromImage(CanvasBitmap))
                 {
                     g.DrawLine(pen, ToolStartPoint, e.Location);
                 }
                 ToolStartPoint = e.Location;
+                Canvas.Image = CanvasBitmap; // Обновляем изображение
             }
+            
             Canvas.Refresh();
         }
 
@@ -363,13 +372,7 @@ namespace CourseProject
 
             if (oldColor.ToArgb() == newColor.ToArgb()) return;
 
-            FloodFill(image, e.X, e.Y, oldColor, newColor);
-        }
-
-        // Обработчик заливки
-        private void FloodFill(Bitmap image, int x, int y, Color oldColor, Color newColor)
-        {
-            if (x < 0 || x >= image.Width || y < 0 || y >= image.Height)
+            if (e.X < 0 || e.X >= image.Width || e.Y < 0 || e.Y >= image.Height)
                 return;
 
             BitmapData data = image.LockBits(
@@ -385,7 +388,7 @@ namespace CourseProject
             int newArgb = newColor.ToArgb();
 
             Stack<Point> points = new Stack<Point>();
-            points.Push(new Point(x, y));
+            points.Push(new Point(e.X, e.Y));
 
             while (points.Count > 0)
             {
@@ -411,6 +414,7 @@ namespace CourseProject
             image.UnlockBits(data);
 
             Canvas.Image = image;
+            CanvasBitmap = new Bitmap(image);
         }
 
         // Изменение толщины
@@ -507,18 +511,18 @@ namespace CourseProject
                 {
                     IntPtr sourcePtr = IntPtr.Add(originalPtr, y * originalStride);
                     IntPtr destPtr = IntPtr.Add(newPtr, y * newStride);
-                    byte[] buffer = new byte[copyWidth * 4]; // 4 байта на пиксель (ARGB)
-                    Marshal.Copy(sourcePtr, buffer, 0, buffer.Length); // Копируем строку в буфер
-                    Marshal.Copy(buffer, 0, destPtr, buffer.Length); // Копируем буфер в новое изображение
+                    byte[] buffer = new byte[copyWidth * 4];
+                    Marshal.Copy(sourcePtr, buffer, 0, buffer.Length);
+                    Marshal.Copy(buffer, 0, destPtr, buffer.Length);
                 }
             }
             finally
             {
-                // Разблокируем биты
                 originalBitmap.UnlockBits(originalData);
                 newBitmap.UnlockBits(newData);
             }
 
+            CanvasBitmap = new Bitmap(newBitmap);
             Canvas.Image = newBitmap;
         }
 
@@ -530,10 +534,10 @@ namespace CourseProject
             // Заполняем массив цветом
             for (int x = 0; x < width; x++)
             {
-                fillRow[x * 4] = fillColor.B;     // Синий
-                fillRow[x * 4 + 1] = fillColor.G; // Зеленый
-                fillRow[x * 4 + 2] = fillColor.R; // Красный
-                fillRow[x * 4 + 3] = fillColor.A; // Альфа
+                fillRow[x * 4] = fillColor.B;
+                fillRow[x * 4 + 1] = fillColor.G;
+                fillRow[x * 4 + 2] = fillColor.R;
+                fillRow[x * 4 + 3] = fillColor.A;
             }
 
             // Копируем заполненную строку в каждую строку изображения
@@ -620,11 +624,14 @@ namespace CourseProject
 
         private void DeleteFragment()
         {
-            // Удаляем фрагмент с холста
-            using (Graphics g = Graphics.FromImage(CanvasBitmap))
+            if (FragmentToDrag != null)
             {
-                g.SetClip(FragmentToDrag.SourceRect);
-                g.Clear(CanvasColor);
+                // Удаляем фрагмент с холста
+                using (Graphics g = Graphics.FromImage(CanvasBitmap))
+                {
+                    g.SetClip(FragmentToDrag.SourceRect);
+                    g.Clear(CanvasColor);
+                }
             }
         }
 
@@ -634,6 +641,8 @@ namespace CourseProject
             {
                 using (OpenFileDialog)
                 {
+                    OpenFileDialog.Filter = _FILTER;
+
                     if (OpenFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         UpdateCanvas(new Bitmap(OpenFileDialog.FileName, true));
@@ -670,6 +679,8 @@ namespace CourseProject
             {
                 using (SaveFileDialog)
                 {
+                    SaveFileDialog.Filter = _FILTER;
+
                     if (SaveFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         Bitmap bitmap = new Bitmap(Canvas.Image);
@@ -696,7 +707,7 @@ namespace CourseProject
             );
         }
 
-        private void CalculateResize(MouseEventArgs e)
+        private void CalculateCanvasResizing(MouseEventArgs e)
         {
             // Вычисляем новую ширину и высоту Canvas
             int newWidth = Canvas.Width + (e.X - LastPoint.X);
