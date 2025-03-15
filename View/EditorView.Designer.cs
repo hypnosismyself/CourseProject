@@ -455,10 +455,6 @@
             this.Canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseMove);
             this.Canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseUp);
             // 
-            // OpenFileDialog
-            // 
-            this.OpenFileDialog.FileName = "openFileDialog1";
-            // 
             // EditorView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
