@@ -29,7 +29,7 @@ namespace CourseProject
         private bool CanPaint;
 
         // Объекты для работы с изображением
-        private readonly Bitmap CanvasBitmap;
+        private Bitmap CanvasBitmap;
         private Bitmap TempBitmap;
         private DraggedFragment FragmentToDrag;
 
@@ -39,24 +39,29 @@ namespace CourseProject
 
         private Dictionary<string, Action<Graphics, Pen, Point, Point>> toolActions;
 
+        // Конструктор
         public EditorView(Color color)
         {
-            CanvasColor = color;
             InitializeComponent();
-            DoubleBuffered = true;
-            CanPaint = false;
 
-            CanvasBitmap = new Bitmap(Canvas.Width, Canvas.Height);
-            using (Graphics g = Graphics.FromImage(CanvasBitmap))
-            {
-                g.Clear(CanvasColor);
-            }
-            Canvas.Image = CanvasBitmap;
+            CanvasColor = color;
+
 
             MainColorButton.ForeColor = MainColor;
             AdditionalColorButton.ForeColor = AdditionalColor;
 
             InitializeToolActions();
+
+            DoubleBuffered = true;
+            CanPaint = false;
+
+            CanvasBitmap = new Bitmap(Canvas.Width, Canvas.Height);
+            Canvas.Image = CanvasBitmap;
+
+            using (Graphics g = Graphics.FromImage(CanvasBitmap))
+            {
+                g.Clear(CanvasColor);
+            }
         }
 
         // Инициализатор словаря сложных инструментов
@@ -163,52 +168,12 @@ namespace CourseProject
         {
             if (IsResizing)
             {
-                // Вычисляем новую ширину и высоту Canvas
-                int newWidth = Canvas.Width + (e.X - LastPoint.X);
-                int newHeight = Canvas.Height + (e.Y - LastPoint.Y);
-
-                // Ограничиваем размеры Canvas, чтобы он не выходил за пределы формы
-                int maxWidth = ClientSize.Width - 10 - Canvas.Left; // Максимальная ширина
-                int maxHeight = ClientSize.Height - 10 - Canvas.Top; // Максимальная высота
-
-                // Проверяем, чтобы новые размеры не превышали допустимые
-                if (newWidth > maxWidth)
-                    newWidth = maxWidth;
-                if (newHeight > maxHeight)
-                    newHeight = maxHeight;
-
-                // Устанавливаем минимальные размеры (например, 50x50)
-                int minWidth = 1;
-                int minHeight = 1;
-                if (newWidth < minWidth)
-                    newWidth = minWidth;
-                if (newHeight < minHeight)
-                    newHeight = minHeight;
-
-                // Убедимся, что Canvas не выходит за пределы формы
-                // Проверяем, не выходит ли правая граница Canvas за пределы формы
-                if (Canvas.Left + newWidth > this.ClientSize.Width)
-                    newWidth = this.ClientSize.Width - Canvas.Left;
-
-                // Проверяем, не выходит ли нижняя граница Canvas за пределы формы
-                if (Canvas.Top + newHeight > ClientSize.Height)
-                    newHeight = ClientSize.Height - Canvas.Top;
-
-                // Устанавливаем новые размеры Canvas
-                Canvas.Size = new Size(newWidth, newHeight);
-
-                // Обновляем положение Label
-                SizeLabel.Location = new Point(Canvas.Right, Canvas.Bottom);
-                SizeLabel.Text = $"Ширина: {Canvas.Width}\nВысота: {Canvas.Height}";
-
-                //this.Width - e.X < 200 ? e.Location : new Point(Width - e.X, e.Y)
-                LastPoint = e.Location;
+                CalculateResize(e);
 
                 return;
             }
 
-            if (!CanPaint || SelectedTool == "Пипетка" || SelectedTool == "Заливка")
-                return;
+            if (!CanPaint || SelectedTool == "Пипетка" || SelectedTool == "Заливка") return;
 
             Color color = e.Button == MouseButtons.Left ? MainColor : AdditionalColor;
             Pen pen = CreatePenForTool(SelectedTool, color);
@@ -448,48 +413,6 @@ namespace CourseProject
             Canvas.Image = image;
         }
 
-        // Метод для копирования выделенного фрагмента в буфер обмена
-        private void CopyFragment()
-        {
-            if (FragmentToDrag != null)
-            {
-                // Создаем Bitmap из выделенного фрагмента
-                Bitmap fragmentBitmap = new Bitmap(FragmentToDrag.SourceRect.Width, FragmentToDrag.SourceRect.Height);
-                using (Graphics g = Graphics.FromImage(fragmentBitmap))
-                {
-                    g.DrawImage(CanvasBitmap, new Rectangle(0, 0, fragmentBitmap.Width, fragmentBitmap.Height),
-                                FragmentToDrag.SourceRect, GraphicsUnit.Pixel);
-                }
-
-                // Копируем Bitmap в буфер обмена
-                Clipboard.SetImage(fragmentBitmap);
-            }
-        }
-
-        // Метод для вырезания выделенного фрагмента
-        private void CutFragment()
-        {
-            if (FragmentToDrag != null)
-            {
-                // Копируем фрагмент в буфер обмена
-                CopyFragment();
-
-                // Удаляем фрагмент с холста
-                using (Graphics g = Graphics.FromImage(CanvasBitmap))
-                {
-                    g.SetClip(FragmentToDrag.SourceRect);
-                    g.Clear(CanvasColor);
-                }
-
-                // Обновляем изображение в PictureBox
-                Canvas.Image = CanvasBitmap;
-
-                // Сбрасываем выделение
-                FragmentToDrag = null;
-                Canvas.Invalidate();
-            }
-        }
-
         // Изменение толщины
         private void WidthTrackBar_ValueChanged(object sender, System.EventArgs e)
         {
@@ -635,6 +558,17 @@ namespace CourseProject
             PasteFragment();
         }
 
+        private void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteFragment();
+        }
+
+        private void SelectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectRadioButton.Select();
+
+        }
+
         private void PasteFragment()
         {
             if (Clipboard.ContainsImage())
@@ -646,6 +580,165 @@ namespace CourseProject
                 }
                 Canvas.Image = CanvasBitmap;
             }
+        }
+
+        // Метод для копирования выделенного фрагмента в буфер обмена
+        private void CopyFragment()
+        {
+            if (FragmentToDrag != null)
+            {
+                // Создаем Bitmap из выделенного фрагмента
+                Bitmap fragmentBitmap = new Bitmap(FragmentToDrag.SourceRect.Width, FragmentToDrag.SourceRect.Height);
+                using (Graphics g = Graphics.FromImage(fragmentBitmap))
+                {
+                    g.DrawImage(CanvasBitmap, new Rectangle(0, 0, fragmentBitmap.Width, fragmentBitmap.Height),
+                                FragmentToDrag.SourceRect, GraphicsUnit.Pixel);
+                }
+
+                // Копируем Bitmap в буфер обмена
+                Clipboard.SetImage(fragmentBitmap);
+            }
+        }
+
+        // Метод для вырезания выделенного фрагмента
+        private void CutFragment()
+        {
+            if (FragmentToDrag != null)
+            {
+                // Копируем фрагмент в буфер обмена
+                CopyFragment();
+                DeleteFragment();
+
+                // Обновляем изображение в PictureBox
+                Canvas.Image = CanvasBitmap;
+
+                // Сбрасываем выделение
+                FragmentToDrag = null;
+                Canvas.Invalidate();
+            }
+        }
+
+        private void DeleteFragment()
+        {
+            // Удаляем фрагмент с холста
+            using (Graphics g = Graphics.FromImage(CanvasBitmap))
+            {
+                g.SetClip(FragmentToDrag.SourceRect);
+                g.Clear(CanvasColor);
+            }
+        }
+
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (OpenFileDialog)
+                {
+                    if (OpenFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        UpdateCanvas(new Bitmap(OpenFileDialog.FileName, true));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex.Message + "\n" + ex.StackTrace);
+            }
+        }
+
+        // Метод обновления картинки
+        public void UpdateCanvas(Bitmap image)
+        {
+            try
+            {
+                // Освобождаем старое изображение
+                Canvas.Image?.Dispose();
+
+                CanvasBitmap = image;
+                Canvas.Image = CanvasBitmap;
+                Canvas.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (SaveFileDialog)
+                {
+                    if (SaveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        Bitmap bitmap = new Bitmap(Canvas.Image);
+                        bitmap.Save(SaveFileDialog.FileName);
+
+                        MessageBox.Show($"Файл сохранен в {SaveFileDialog.FileName}",
+                            "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex.Message + "\n" + ex.StackTrace);
+            }
+        }
+
+        // Служебный метод вывода ошибки
+        private void ShowErrorMessage(string message)
+        {
+            MessageBox.Show(
+                message, "Ошибка",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
+        }
+
+        private void CalculateResize(MouseEventArgs e)
+        {
+            // Вычисляем новую ширину и высоту Canvas
+            int newWidth = Canvas.Width + (e.X - LastPoint.X);
+            int newHeight = Canvas.Height + (e.Y - LastPoint.Y);
+
+            // Ограничиваем размеры Canvas, чтобы он не выходил за пределы формы
+            int maxWidth = ClientSize.Width - 10 - Canvas.Left; // Максимальная ширина
+            int maxHeight = ClientSize.Height - 10 - Canvas.Top; // Максимальная высота
+
+            // Проверяем, чтобы новые размеры не превышали допустимые
+            if (newWidth > maxWidth)
+                newWidth = maxWidth;
+            if (newHeight > maxHeight)
+                newHeight = maxHeight;
+
+            // Устанавливаем минимальные размеры (например, 50x50)
+            int minWidth = 1;
+            int minHeight = 1;
+
+            if (newWidth < minWidth)
+                newWidth = minWidth;
+            if (newHeight < minHeight)
+                newHeight = minHeight;
+
+            // Убедимся, что Canvas не выходит за пределы формы
+            // Проверяем, не выходит ли правая граница Canvas за пределы формы
+            if (Canvas.Left + newWidth > ClientSize.Width)
+                newWidth = ClientSize.Width - Canvas.Left;
+
+            // Проверяем, не выходит ли нижняя граница Canvas за пределы формы
+            if (Canvas.Top + newHeight > ClientSize.Height)
+                newHeight = ClientSize.Height - Canvas.Top;
+
+            // Устанавливаем новые размеры Canvas
+            Canvas.Size = new Size(newWidth, newHeight);
+
+            // Обновляем положение Label
+            SizeLabel.Location = new Point(Canvas.Right, Canvas.Bottom);
+            SizeLabel.Text = $"Ширина: {Canvas.Width}\nВысота: {Canvas.Height}";
+
+            //this.Width - e.X < 200 ? e.Location : new Point(Width - e.X, e.Y)
+            LastPoint = e.Location;
         }
     }
 }
