@@ -17,6 +17,7 @@ namespace CourseProject
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new SandBox());
             Application.Run(new EditorView(Color.White));
+            //Application.Run(new MDIParentView());
         }
     }
 }
