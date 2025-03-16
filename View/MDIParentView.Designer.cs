@@ -29,60 +29,65 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MDIParentView));
-            this.MenuStrip = new System.Windows.Forms.MenuStrip();
-            this.ColorDialog = new System.Windows.Forms.ColorDialog();
-            this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.оПрограммеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.OpenEmptyEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ParentMenuStrip = new System.Windows.Forms.MenuStrip();
+            this.EditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenInEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuStrip.SuspendLayout();
+            this.OpenEmptyEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ParentColorDialog = new System.Windows.Forms.ColorDialog();
+            this.ParentOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.ParentMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // MenuStrip
+            // ParentMenuStrip
             // 
-            this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.FileToolStripMenuItem,
-            this.оПрограммеToolStripMenuItem});
-            this.MenuStrip.Location = new System.Drawing.Point(0, 0);
-            this.MenuStrip.Name = "MenuStrip";
-            this.MenuStrip.Size = new System.Drawing.Size(800, 24);
-            this.MenuStrip.TabIndex = 1;
-            this.MenuStrip.Text = "menuStrip1";
+            this.ParentMenuStrip.AllowMerge = false;
+            this.ParentMenuStrip.AutoSize = false;
+            this.ParentMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EditorToolStripMenuItem,
+            this.AboutToolStripMenuItem});
+            this.ParentMenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.ParentMenuStrip.Name = "ParentMenuStrip";
+            this.ParentMenuStrip.Size = new System.Drawing.Size(800, 24);
+            this.ParentMenuStrip.TabIndex = 1;
             // 
-            // FileToolStripMenuItem
+            // EditorToolStripMenuItem
             // 
-            this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EditorToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenInEditorToolStripMenuItem,
-            this.OpenEmptyEditorToolStripMenuItem,
-            this.выходToolStripMenuItem});
-            this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            this.FileToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
-            this.FileToolStripMenuItem.Text = "Файл";
-            // 
-            // оПрограммеToolStripMenuItem
-            // 
-            this.оПрограммеToolStripMenuItem.Name = "оПрограммеToolStripMenuItem";
-            this.оПрограммеToolStripMenuItem.Size = new System.Drawing.Size(94, 20);
-            this.оПрограммеToolStripMenuItem.Text = "О программе";
-            // 
-            // OpenEmptyEditorToolStripMenuItem
-            // 
-            this.OpenEmptyEditorToolStripMenuItem.Name = "OpenEmptyEditorToolStripMenuItem";
-            this.OpenEmptyEditorToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.OpenEmptyEditorToolStripMenuItem.Text = "Пустой редактор";
-            // 
-            // выходToolStripMenuItem
-            // 
-            this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
-            this.выходToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.выходToolStripMenuItem.Text = "Выход";
+            this.OpenEmptyEditorToolStripMenuItem});
+            this.EditorToolStripMenuItem.Name = "EditorToolStripMenuItem";
+            this.EditorToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.EditorToolStripMenuItem.Text = "Редактор";
             // 
             // OpenInEditorToolStripMenuItem
             // 
             this.OpenInEditorToolStripMenuItem.Name = "OpenInEditorToolStripMenuItem";
             this.OpenInEditorToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.OpenInEditorToolStripMenuItem.Text = "Открыть в редакторе";
+            this.OpenInEditorToolStripMenuItem.Click += new System.EventHandler(this.OpenInEditorToolStripMenuItem_Click);
+            // 
+            // OpenEmptyEditorToolStripMenuItem
+            // 
+            this.OpenEmptyEditorToolStripMenuItem.Name = "OpenEmptyEditorToolStripMenuItem";
+            this.OpenEmptyEditorToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.OpenEmptyEditorToolStripMenuItem.Text = "Пустой редактор";
+            this.OpenEmptyEditorToolStripMenuItem.Click += new System.EventHandler(this.OpenEmptyEditorToolStripMenuItem_Click);
+            // 
+            // AboutToolStripMenuItem
+            // 
+            this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
+            this.AboutToolStripMenuItem.Size = new System.Drawing.Size(94, 20);
+            this.AboutToolStripMenuItem.Text = "О программе";
+            this.AboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
+            // 
+            // ParentColorDialog
+            // 
+            this.ParentColorDialog.Color = System.Drawing.Color.White;
+            // 
+            // ParentOpenFileDialog
+            // 
+            this.ParentOpenFileDialog.FileName = "openFileDialog1";
             // 
             // MDIParentView
             // 
@@ -90,27 +95,27 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.MenuStrip);
+            this.Controls.Add(this.ParentMenuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
-            this.MainMenuStrip = this.MenuStrip;
+            this.MainMenuStrip = this.ParentMenuStrip;
             this.Name = "MDIParentView";
             this.Text = "Редактор изображений - BlackDog";
-            this.MenuStrip.ResumeLayout(false);
-            this.MenuStrip.PerformLayout();
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.ParentMenuStrip.ResumeLayout(false);
+            this.ParentMenuStrip.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip MenuStrip;
-        private System.Windows.Forms.ColorDialog ColorDialog;
-        private System.Windows.Forms.ToolStripMenuItem FileToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip ParentMenuStrip;
+        private System.Windows.Forms.ColorDialog ParentColorDialog;
+        private System.Windows.Forms.ToolStripMenuItem EditorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenInEditorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenEmptyEditorToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem выходToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem оПрограммеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AboutToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog ParentOpenFileDialog;
     }
 }
