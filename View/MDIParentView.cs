@@ -1,28 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CourseProject.View
 {
     public partial class MDIParentView: Form
     {
+        // Конструктор
         public MDIParentView()
         {
             InitializeComponent();
+            ParentColorDialog.FullOpen = true;
+        }
 
-            EditorView f = new EditorView(Color.Aqua)
+        // Октрыть пустой редактор
+        private void OpenEmptyEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ParentColorDialog.ShowDialog() == DialogResult.OK)
             {
-                MdiParent = this,
-                Text = "Редактор - " + MdiChildren.Length.ToString(),
-            };
+                EditorView f = new EditorView(ParentColorDialog.Color)
+                {
+                    MdiParent = this,
+                    Text = "Редактор - " + MdiChildren.Length.ToString(),
+                };
 
-            f.Show();
+                f.Show();
+            }
+        }
+
+        // Открыть изображенеи в редакторе
+        private void OpenInEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ParentOpenFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Bitmap image = new Bitmap(ParentOpenFileDialog.FileName);
+
+                EditorView f = new EditorView(image)
+                {
+                    MdiParent = this,
+                    Text = "Редактор - " + ParentOpenFileDialog.FileName,
+                };
+
+                f.Show();
+            }
+        }
+
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show
+            (
+                "Редактор изображений | Автор Никольский В.А. ЗЦИС-27",
+                "О программе",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
         }
     }
 }
