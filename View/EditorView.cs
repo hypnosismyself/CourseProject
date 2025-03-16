@@ -13,6 +13,10 @@ namespace CourseProject
     {
         private const string _FILTER = "Изображения (*.bmp, *.png, *.jpg, *.jpeg)|*.bmp;*.png;*.jpg;*.jpeg;";
 
+        //
+        private int CanvasX;
+        private int CanvasY;
+
         // Флаги для изменения размера холста
         private bool IsResizing = false;
         private Point LastPoint;
@@ -166,6 +170,11 @@ namespace CourseProject
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
+            CanvasX = e.X;
+            CanvasY = e.Y;
+            CoordinateXStripStatusLabel.Text = "X: " + CanvasX.ToString();
+            CoordinateYStripStatusLabel.Text = "Y: " + CanvasY.ToString();
+
             if (IsResizing)
             {
                 CalculateCanvasResizing(e);
@@ -580,7 +589,7 @@ namespace CourseProject
                 Image pastedImage = Clipboard.GetImage();
                 using (Graphics g = Graphics.FromImage(CanvasBitmap))
                 {
-                    g.DrawImage(pastedImage, new Point(10, 10)); // Укажите нужные координаты для вставки
+                    g.DrawImage(pastedImage, new Point(CanvasX, CanvasY)); // Укажите нужные координаты для вставки
                 }
                 Canvas.Image = CanvasBitmap;
             }
@@ -612,13 +621,6 @@ namespace CourseProject
                 // Копируем фрагмент в буфер обмена
                 CopyFragment();
                 DeleteFragment();
-
-                // Обновляем изображение в PictureBox
-                Canvas.Image = CanvasBitmap;
-
-                // Сбрасываем выделение
-                FragmentToDrag = null;
-                Canvas.Invalidate();
             }
         }
 
@@ -633,6 +635,13 @@ namespace CourseProject
                     g.Clear(CanvasColor);
                 }
             }
+
+            // Обновляем изображение в PictureBox
+            Canvas.Image = CanvasBitmap;
+
+            // Сбрасываем выделение
+            FragmentToDrag = null;
+            Canvas.Invalidate();
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -646,6 +655,7 @@ namespace CourseProject
                     if (OpenFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         UpdateCanvas(new Bitmap(OpenFileDialog.FileName, true));
+                        RefreshFormName(OpenFileDialog.FileName);
                     }
                 }
             }
@@ -750,6 +760,12 @@ namespace CourseProject
 
             //this.Width - e.X < 200 ? e.Location : new Point(Width - e.X, e.Y)
             LastPoint = e.Location;
+        }
+
+        // Служебный метод переименования формы
+        private void RefreshFormName(string filename)
+        {
+            Text = "Редактор - " + filename;
         }
     }
 }

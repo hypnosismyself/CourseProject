@@ -39,9 +39,6 @@
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.редактироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.яркостьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.контрастToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.выделениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,9 +59,13 @@
             this.Canvas = new System.Windows.Forms.PictureBox();
             this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.CoordinateXStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.CoordinateYStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.WidthTrackBar)).BeginInit();
             this.MenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // WidthTrackBar
@@ -126,7 +127,6 @@
             // 
             this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem,
-            this.редактироватьToolStripMenuItem,
             this.выделениеToolStripMenuItem});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.Name = "MenuStrip";
@@ -156,27 +156,6 @@
             this.SaveToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.SaveToolStripMenuItem.Text = "Сохранить";
             this.SaveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
-            // 
-            // редактироватьToolStripMenuItem
-            // 
-            this.редактироватьToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.яркостьToolStripMenuItem,
-            this.контрастToolStripMenuItem});
-            this.редактироватьToolStripMenuItem.Name = "редактироватьToolStripMenuItem";
-            this.редактироватьToolStripMenuItem.Size = new System.Drawing.Size(99, 20);
-            this.редактироватьToolStripMenuItem.Text = "Редактировать";
-            // 
-            // яркостьToolStripMenuItem
-            // 
-            this.яркостьToolStripMenuItem.Name = "яркостьToolStripMenuItem";
-            this.яркостьToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.яркостьToolStripMenuItem.Text = "Яркость";
-            // 
-            // контрастToolStripMenuItem
-            // 
-            this.контрастToolStripMenuItem.Name = "контрастToolStripMenuItem";
-            this.контрастToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.контрастToolStripMenuItem.Text = "Контраст";
             // 
             // выделениеToolStripMenuItem
             // 
@@ -455,11 +434,35 @@
             this.Canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseMove);
             this.Canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Canvas_MouseUp);
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CoordinateXStripStatusLabel,
+            this.CoordinateYStripStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 598);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1024, 22);
+            this.statusStrip1.TabIndex = 18;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // CoordinateXStripStatusLabel
+            // 
+            this.CoordinateXStripStatusLabel.Name = "CoordinateXStripStatusLabel";
+            this.CoordinateXStripStatusLabel.Size = new System.Drawing.Size(17, 17);
+            this.CoordinateXStripStatusLabel.Text = "X:";
+            // 
+            // CoordinateYStripStatusLabel
+            // 
+            this.CoordinateYStripStatusLabel.Name = "CoordinateYStripStatusLabel";
+            this.CoordinateYStripStatusLabel.Size = new System.Drawing.Size(17, 17);
+            this.CoordinateYStripStatusLabel.Text = "Y:";
+            // 
             // EditorView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1024, 620);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.ResizeRadioButton);
             this.Controls.Add(this.SizeLabel);
             this.Controls.Add(this.SelectRadioButton);
@@ -487,6 +490,8 @@
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -512,11 +517,8 @@
         private System.Windows.Forms.RadioButton SelectRadioButton;
         private System.Windows.Forms.MenuStrip MenuStrip;
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem редактироватьToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SaveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem яркостьToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem контрастToolStripMenuItem;
         private System.Windows.Forms.Label SizeLabel;
         private System.Windows.Forms.RadioButton ResizeRadioButton;
         private System.Windows.Forms.ToolStripMenuItem выделениеToolStripMenuItem;
@@ -527,6 +529,9 @@
         private System.Windows.Forms.ToolStripMenuItem SelectAllToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog SaveFileDialog;
         private System.Windows.Forms.OpenFileDialog OpenFileDialog;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel CoordinateXStripStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel CoordinateYStripStatusLabel;
     }
 }
 
