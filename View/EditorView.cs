@@ -36,6 +36,7 @@ namespace CourseProject
         // Флаги для управления рисованием
         public bool CtrlPressed;
         private bool CanPaint;
+        private MouseButtons pressed_button;
 
         // Объекты для работы с изображением
         private Bitmap CanvasBitmap;
@@ -168,10 +169,10 @@ namespace CourseProject
             var (x, y, width, height) = CalculateShapeDimensions(start, end, isCtrlPressed);
 
             // Рисуем прямоугольник (или квадрат, если нажат Ctrl)
-            if (AdditionalColor == CanvasColor)
+            if (pressed_button == MouseButtons.Left)
                 g.DrawRectangle(pen, x, y, width, height);
-            else
-                g.FillRectangle(new SolidBrush(AdditionalColor), x, y, width, height);
+            else if (pressed_button == MouseButtons.Right)
+                g.FillRectangle(new SolidBrush(MainColor), x, y, width, height);
         }
 
         // Нарисовать эллипс
@@ -183,15 +184,17 @@ namespace CourseProject
             var (x, y, width, height) = CalculateShapeDimensions(start, end, isCtrlPressed);
 
             // Рисуем эллипс (или круг, если нажат Ctrl)
-            if (AdditionalColor == CanvasColor)
+            if (pressed_button == MouseButtons.Left)
                 g.DrawEllipse(pen, x, y, width, height);
-            else
-                g.FillEllipse(new SolidBrush(AdditionalColor), x, y, width, height);
+            else if (pressed_button == MouseButtons.Right)
+                g.FillEllipse(new SolidBrush(MainColor), x, y, width, height);
         }
 
         // При нажатии кнопки мыши на холсте
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
         {
+            pressed_button = e.Button == MouseButtons.Left ? MouseButtons.Left : MouseButtons.Right;
+
             if (SelectedTool != null)
             {
                 // Проверяем, находится ли курсор в правом нижнем углу PictureBox
